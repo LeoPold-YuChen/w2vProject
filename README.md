@@ -10,5 +10,14 @@ pip install -r requirements.txt
 python a.py
 ```
 
+### 成果展示 -> 輸入'左下方的牙齒再喝到冰水時會敏感'
+可以看到重點有抓到牙齒
+![image](./Ref/annotatedHeatmaps.png)
+
 ---
+Env:
 缺少權重檔與一些詞典
+
+Feature:
+
+

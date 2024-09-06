@@ -5,3 +5,5 @@ Ref/
 
 PyCode/__pycache__/
 PyCode/jieba/
+
+!Ref/annotatedHeatmaps.png
