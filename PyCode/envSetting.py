@@ -6,8 +6,10 @@ Only run once
 import os
 import sys
 import jieba
-from b import stopDict
+from b import stopDict_2
 from gensim.models import word2vec
+import time
+
 
 # show position
 def show():
@@ -32,8 +34,10 @@ def loadJiebaDict():
 
 
 def w2vLoad():  # w2v+stopDict
+    # 9sec
     model = word2vec.Word2Vec.load('../Ref/word2vec.zh.300.model')
     vocab = model.wv.index_to_key
     vectors = model.wv[vocab]
-    vocab, vectors = stopDict(vocab, vectors)
+    # 11sec
+    vocab, vectors = stopDict_2(vocab, vectors)
     return vocab, vectors, model

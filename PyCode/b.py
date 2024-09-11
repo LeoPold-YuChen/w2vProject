@@ -1,5 +1,8 @@
 '''Use more then 2 times'''
 import jieba
+import os
+from trainSVM import trainSVM
+from testSVM import testSVM
 
 
 def cut(sentence):
@@ -19,7 +22,8 @@ def stopDict_2(vocab, vectors):
 
     # 使用列表推導式來過濾詞彙和向量
     filtered_vocab = [word for word in vocab if word not in stopwords]
-    filtered_indices = [i for i, word in enumerate(vocab) if word not in stopwords]
+    filtered_indices = [i for i, word in enumerate(vocab)
+                        if word not in stopwords]
 
     # 根據過濾的索引過濾向量
     vectors = vectors[filtered_indices]
@@ -73,7 +77,7 @@ Finish 1Step
 '''
 
 
-def happy(vocabb, model):
+def happy(vocabb, model, updateVectors):
     maxres = []
     totalres = []
     classes = ['內科', '泌尿科', '婦產科', '耳鼻喉科', '眼科', '牙科']
@@ -83,15 +87,32 @@ def happy(vocabb, model):
             if ('手' or '腳') in j and '外科' == i:
                 res.append(1)
             elif '泌尿科' == i:
-                res.append(model.wv.similarity(i, j)-0.05)
+                res.append(model.wv.similarity(i, j)*0.75)
             elif '牙科' == i:
                 res.append(model.wv.similarity(i, j)-0.1)
-            elif '內科' == i:
-                res.append(model.wv.similarity(i, j)+0.05)
+            # elif '內科' == i:
+            #     res.append(model.wv.similarity(i, j)+0.05)
             else:
                 res.append(model.wv.similarity(i, j))
         maxres.append(max(res))
         totalres.append(res[:])
-    print(f'7科類別相似最高: {max(maxres)}\n各科相似度分析: {maxres}')
-    print(f'相似度最高科名: {classes[maxres.index(max(maxres))]}')
-    return classes, totalres
+
+    '''3class'''
+    if maxres.index(max(maxres)) in [3, 4, 5]:
+        print('Enter SVM')
+        classes3 = classes[3:]
+        # print(classes)  改成3個類別
+        # print(np.array(updateVectors).shape)  結巴切字後的300維詞向量
+        # train(classes, updateVectors, vocabb, model)
+        if not os.path.exists("../Ref/svmModel.pkl"):
+            print('尚未存在svm模型,建立中..')
+            trainSVM(classes3, updateVectors, vocabb, model)
+        else:
+            print('已存在模型')
+        a = testSVM(classes3, updateVectors, vocabb)
+        print(f'svm相似度最高科名: {a}')
+        return 0, 0  # 出去後不畫圖
+    else:
+        print(f'7科類別相似最高: {max(maxres)}\n各科相似度分析: {maxres}')
+        print(f'相似度最高科名: {classes[maxres.index(max(maxres))]}')
+        return classes, totalres
