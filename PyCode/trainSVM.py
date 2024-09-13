@@ -5,22 +5,26 @@ from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
 
 
-def trainSVM(classes, updateVectors, cut_jieba, model):
+def trainSVM(classes, updateVectors, cut_jieba, model, superU):
     a = pd.read_csv("../Ref/threeClass.csv")
     x = a.iloc[:, 0].tolist()
     y = a.iloc[:, 1].tolist()
     filtered_x, filtered_y, vectors = w2v(x, y, model)
-    new_train_x = preprocessing(vectors)
+    new_train_x = preprocessing(vectors, superU)  # return standard 過的x
     svm(new_train_x, filtered_y)
 
 
-def svm(ssModel, y):
-    svmModel = SVC(kernel='rbf', C=1.0, decision_function_shape='ovr')
-    svmModel.fit(ssModel, y)
+def svm(nX, y):
+    import numpy as np
+    print(np.array(nX).shape)
+    print(y)
+    svmModel = SVC(kernel='rbf', C=1, class_weight={0: .8, 1: .8, 2: 30},
+                   decision_function_shape='ovr')
+    svmModel.fit(nX, y)
     pickle.dump(svmModel, open('../Ref/svmModel.pkl', 'wb'))
 
 
-def preprocessing(vectors):
+def preprocessing(vectors, superU):
     '''
     資料縮放是根據column來進行
     Choose
@@ -33,7 +37,8 @@ def preprocessing(vectors):
     s = StandardScaler()
     new_train_x = s.fit_transform(vectors)
     pickle.dump(s, open('../Ref/ssModel.pkl', 'wb'))
-    print(f'ss平均值: {s.mean_}')
+    if superU:
+        print(f'ss平均值: {s.mean_}')
     return new_train_x
 
 

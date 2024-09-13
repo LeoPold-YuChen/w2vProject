@@ -4,9 +4,11 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-def plot(classes, embedding, vocabb):
-    print(np.array(embedding).shape)
-    print(embedding)
+def plot(classes, embedding, vocabb, superU):
+    plt.ion()
+    if superU:
+        print(np.array(embedding).shape)
+        print(embedding)
 
     plt.rcParams['font.sans-serif'] = ['simsun']  # 使用黑體字體來顯示中文
     plt.rcParams['axes.unicode_minus'] = False  # 用來正常顯示負號
@@ -37,3 +39,6 @@ def plot(classes, embedding, vocabb):
     ax.set_title("Annotated Heatmap of Medical Department Embeddings")
     fig.tight_layout()
     plt.show()
+    plt.pause(.1)  # 显示1s
+    plt.close()
+

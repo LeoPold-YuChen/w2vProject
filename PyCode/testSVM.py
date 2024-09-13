@@ -13,6 +13,7 @@ def testSVM(classes, jbVec, jbVoc):
     b = res.count(1)
     c = res.count(2)
     total = [a, b, c]
+    # print(f'{jbVoc}')
     # print(f'{a} {b} {c} {max(a,b,c)}')
     # 沒做當2個出現次數一樣時的處理，
     # 現在會預設跑到同類最前面那個[3,9,9] -> 1

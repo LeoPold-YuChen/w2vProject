@@ -77,7 +77,7 @@ Finish 1Step
 '''
 
 
-def happy(vocabb, model, updateVectors):
+def happy(vocabb, model, updateVectors, superU):
     maxres = []
     totalres = []
     classes = ['內科', '泌尿科', '婦產科', '耳鼻喉科', '眼科', '牙科']
@@ -87,9 +87,11 @@ def happy(vocabb, model, updateVectors):
             if ('手' or '腳') in j and '外科' == i:
                 res.append(1)
             elif '泌尿科' == i:
-                res.append(model.wv.similarity(i, j)*0.75)
+                res.append(model.wv.similarity(i, j)*.8)
+            elif '婦產科' == i:
+                res.append(model.wv.similarity(i, j)*1.3)
             elif '牙科' == i:
-                res.append(model.wv.similarity(i, j)-0.1)
+                res.append(model.wv.similarity(i, j)-.1)
             # elif '內科' == i:
             #     res.append(model.wv.similarity(i, j)+0.05)
             else:
@@ -99,20 +101,26 @@ def happy(vocabb, model, updateVectors):
 
     '''3class'''
     if maxres.index(max(maxres)) in [3, 4, 5]:
-        print('Enter SVM')
+        if superU:
+            print('Enter SVM')
         classes3 = classes[3:]
+        classes3[0], classes3[1] = classes3[1], classes3[0]
+        # print(classes3)
         # print(classes)  改成3個類別
         # print(np.array(updateVectors).shape)  結巴切字後的300維詞向量
         # train(classes, updateVectors, vocabb, model)
         if not os.path.exists("../Ref/svmModel.pkl"):
-            print('尚未存在svm模型,建立中..')
-            trainSVM(classes3, updateVectors, vocabb, model)
+            if superU:
+                print('尚未存在svm模型,建立中..')
+            trainSVM(classes3, updateVectors, vocabb, model, superU)
         else:
-            print('已存在模型')
+            if superU:
+                print('已存在模型')
         a = testSVM(classes3, updateVectors, vocabb)
         print(f'svm相似度最高科名: {a}')
-        return 0, 0  # 出去後不畫圖
+        return 0, 0, a  # 出去後不畫圖
     else:
-        print(f'7科類別相似最高: {max(maxres)}\n各科相似度分析: {maxres}')
+        if superU:
+            print(f'7科類別相似最高: {max(maxres)}\n各科相似度分析: {maxres}')
         print(f'相似度最高科名: {classes[maxres.index(max(maxres))]}')
-        return classes, totalres
+        return classes, totalres, classes[maxres.index(max(maxres))]

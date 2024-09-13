@@ -8,6 +8,7 @@ import sys
 import jieba
 from b import stopDict_2
 from gensim.models import word2vec
+import logging
 
 model = None
 
@@ -30,6 +31,7 @@ def addEnv():
 
 
 def loadJiebaDict():
+    logging.getLogger('jieba').setLevel(logging.ERROR)
     jieba.load_userdict('../Ref/userdict-corpus-v2.txt')
     jieba.set_dictionary('../Ref/dict.txt')
 
